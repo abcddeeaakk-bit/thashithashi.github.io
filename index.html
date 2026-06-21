@@ -2,242 +2,139 @@
 
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Health Quest</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEALTH QUEST</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+```
+<link rel="stylesheet" href="style.css">
 
-body{
-    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#0f172a;
-    color:white;
-}
-
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-}
-
-.header{
-    text-align:center;
-    padding:40px 0;
-}
-
-.header h1{
-    font-size:3rem;
-}
-
-.header p{
-    color:#94a3b8;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:#1e293b;
-    border-radius:20px;
-    padding:25px;
-}
-
-.card h2{
-    margin-bottom:15px;
-}
-
-.stat{
-    font-size:2rem;
-    font-weight:bold;
-    color:#38bdf8;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    margin-top:10px;
-    margin-bottom:10px;
-}
-
-button{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    background:#38bdf8;
-    color:white;
-    font-size:1rem;
-    cursor:pointer;
-}
-
-.alice{
-    line-height:1.8;
-    color:#cbd5e1;
-}
-
-.footer{
-    text-align:center;
-    margin-top:40px;
-    color:#64748b;
-}
-</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+```
 
 </head>
 
 <body>
 
+<header>
+    <h1>⚔️ HEALTH QUEST</h1>
+    <p>勇者 とーる × AI秘書 アリス</p>
+</header>
+
 <div class="container">
 
-<div class="header">
-<h1>HEALTH QUEST</h1>
-<p>AI秘書アリスと健康管理</p>
+```
+<section class="card hero">
+
+    <div>
+        <h2>勇者ステータス</h2>
+
+        <div class="status-row">
+            <div>
+                <span>Lv.</span>
+                <h3 id="level">1</h3>
+            </div>
+
+            <div>
+                <span>戦闘力</span>
+                <h3 id="power">0</h3>
+            </div>
+        </div>
+
+        <div class="title-box">
+            称号：
+            <span id="titleName">
+                運動初心者
+            </span>
+        </div>
+
+        <div class="streak-box">
+            🔥連続記録
+            <span id="streak">
+                0
+            </span>日
+        </div>
+
+    </div>
+
+</section>
+
+<section class="card">
+
+    <h2>本日の記録</h2>
+
+    <label>体重(kg)</label>
+    <input id="weight" type="number">
+
+    <label>筋トレ時間(分)</label>
+    <input id="training" type="number">
+
+    <label>有酸素時間(分)</label>
+    <input id="cardio" type="number">
+
+    <button onclick="saveData()">
+        記録する
+    </button>
+
+</section>
+
+<section class="card alice-card">
+
+    <h2>🤖 AI秘書 アリス</h2>
+
+    <div class="alice-avatar">
+        👩
+    </div>
+
+    <p id="aliceMessage">
+        おはようございます♪
+        今日も健康への冒険を始めましょう！
+    </p>
+
+</section>
+
+<section class="card">
+
+    <h2>📊 体重推移</h2>
+
+    <canvas id="weightChart"></canvas>
+
+</section>
+
+<section class="card">
+
+    <h2>⚔️ RPGステータス</h2>
+
+    <div class="stats">
+
+        <div>
+            STR
+            <span id="str">10</span>
+        </div>
+
+        <div>
+            VIT
+            <span id="vit">10</span>
+        </div>
+
+        <div>
+            AGI
+            <span id="agi">10</span>
+        </div>
+
+        <div>
+            INT
+            <span id="int">10</span>
+        </div>
+
+    </div>
+
+</section>
+```
+
 </div>
 
-<div class="grid">
-
-<div class="card">
-<h2>勇者ステータス</h2>
-
-<p>レベル</p>
-<div class="stat" id="level">1</div>
-
-<p>戦闘力</p>
-<div class="stat" id="power">0</div>
-
-</div>
-
-<div class="card">
-<h2>今日の記録</h2>
-
-<label>体重(kg)</label> <input type="number" id="weight">
-
-<label>筋トレ時間(分)</label> <input type="number" id="training">
-
-<label>有酸素時間(分)</label> <input type="number" id="cardio">
-
-<button onclick="saveData()">
-記録する
-</button>
-
-</div>
-
-<div class="card">
-<h2>AI秘書 アリス</h2>
-
-<div class="alice" id="alice">
-
-おはようございます、とーるさん。<br>
-今日も健康への冒険を始めましょう。
-
-</div>
-
-</div>
-
-</div>
-
-<div class="footer">
-Health Quest Version 1.0
-</div>
-
-</div>
-
-<script>
-
-function saveData(){
-
-const weight =
-Number(document.getElementById("weight").value);
-
-const training =
-Number(document.getElementById("training").value);
-
-const cardio =
-Number(document.getElementById("cardio").value);
-
-const power =
-(training*10)+(cardio*5)+(100-weight);
-
-const level =
-Math.max(1,Math.floor(power/100)+1);
-
-document.getElementById("power").innerText =
-power;
-
-document.getElementById("level").innerText =
-level;
-
-let message = "";
-
-if(power < 300){
-message =
-"本日は軽めの活動ですね。あと少し頑張りましょう。";
-}
-else if(power < 800){
-message =
-"素晴らしいです。健康状態は良好です。";
-}
-else{
-message =
-"驚異的な運動量です。レベルアップ間近です。";
-}
-
-document.getElementById("alice").innerHTML =
-"アリスより<br><br>" + message;
-
-localStorage.setItem(
-"healthData",
-JSON.stringify({
-weight,
-training,
-cardio,
-power,
-level
-})
-);
-
-}
-
-window.onload = function(){
-
-const data =
-JSON.parse(
-localStorage.getItem("healthData")
-);
-
-if(!data) return;
-
-document.getElementById("weight").value =
-data.weight;
-
-document.getElementById("training").value =
-data.training;
-
-document.getElementById("cardio").value =
-data.cardio;
-
-document.getElementById("power").innerText =
-data.power;
-
-document.getElementById("level").innerText =
-data.level;
-
-}
-
-</script>
+<script src="app.js"></script>
 
 </body>
-</html>
-<!DOCTYPE html>
-<html lang="ja">
-...
 </html>

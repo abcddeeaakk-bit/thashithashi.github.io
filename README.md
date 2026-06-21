@@ -1,2 +1,0 @@
-# thashithashi.github.io
-
